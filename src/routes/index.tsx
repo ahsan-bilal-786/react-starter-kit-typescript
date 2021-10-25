@@ -5,14 +5,17 @@ import siteLayout from 'layouts/Site';
 import dashboardLayout from 'layouts/Dashboard';
 import Login from 'pages/Auth/Login';
 import Logout from 'pages/Auth/Logout';
+import NewPost from 'pages/NewPost';
 const Signup = lazy(() => import('pages/Auth/Signup'));
 const ChangePassword = lazy(() => import('pages/Auth/ChangePassword'));
 const Dashboard = lazy(() => import('pages/Dashboard'));
 const Profile = lazy(() => import('pages/Profile'));
+const Posts = lazy(() => import('pages/Posts'));
+const PostComments = lazy(() => import('pages/Comments'));
 
 export const RoutesHOC = (routes: any, defaultPath: any) => {
   const Routes: FunctionComponent<any> = (props: any) => (
-    <Suspense fallback={<></>}>
+    <Suspense fallback={<div>Loading...</div>}>
       <Switch>
         {map(routes, (route) => {
           return (
@@ -71,7 +74,25 @@ export const AppRoutes = {
   },
 };
 
-export const DEFAULT_PATH = AppRoutes.LOGIN.path;
-export const USER_LANDING_PAGE = AppRoutes.DASHBOARD.path;
+export const MainRoutes = {
+  POSTS: {
+    path: '/posts',
+    name: 'Posts List',
+    component: dashboardLayout(Posts)
+  },
+  COMMENTS: {
+    path: '/comments',
+    name: 'Post Comments',
+    component: dashboardLayout(PostComments)
+  },
+  DEFAULT: {
+    path: '',
+    name: 'Posts List',
+    component: siteLayout(NewPost)
+  }
+}
 
-export const AppRouter = RoutesHOC(AppRoutes, '/login');
+export const DEFAULT_PATH = MainRoutes.DEFAULT.path;
+// export const USER_LANDING_PAGE = AppRoutes.DASHBOARD.path;
+
+export const AppRouter = RoutesHOC(MainRoutes, DEFAULT_PATH);
