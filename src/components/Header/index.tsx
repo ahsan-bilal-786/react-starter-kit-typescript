@@ -24,7 +24,6 @@ const Header = () => {
         <Nav className='mr-auto'></Nav>
         <Nav>
           <UserDropDown
-            alignRight
             className='dropdown-menu-right'
             title={<FontAwesomeIcon icon={faUserCircle} title='' />}
           >
