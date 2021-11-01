@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import map from 'lodash/map';
 import { Col, Container, Row } from 'react-bootstrap';
 import { PostCard, PostCardActions, PostsWrapper } from './style';
-import { RootStateOrAny, useDispatch, connect, useSelector } from 'react-redux';
+import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import {
   fetchPostsAction,
   deletePostAction,

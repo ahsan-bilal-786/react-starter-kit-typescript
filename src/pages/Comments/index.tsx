@@ -13,20 +13,11 @@ interface IComments {
   email: string;
   body: string;
 }
-const Posts: FC = () => {
+const Comments: FC = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const dispatch = useDispatch();
   const posts = useSelector((state: RootStateOrAny) => state.posts);
-  useEffect(() => {
-    setIsLoading(true);
-    setTimeout(() => {
-      dispatch(fetchPostCommentsAction(1));
-      setIsLoading(false);
-    }, 1000);
-    return () => {
-      // cleanup
-    };
-  }, [dispatch]);
+
+  useEffect(() => {}, [posts]);
 
   return (
     <PostsWrapper>
@@ -59,4 +50,4 @@ const Posts: FC = () => {
   );
 };
 
-export default Posts;
+export default Comments;
