@@ -78,19 +78,19 @@ export const MainRoutes = {
   POSTS: {
     path: '/posts',
     name: 'Posts List',
-    component: dashboardLayout(Posts)
+    component: dashboardLayout(Posts),
   },
   COMMENTS: {
     path: '/comments',
     name: 'Post Comments',
-    component: dashboardLayout(PostComments)
+    component: dashboardLayout(PostComments),
   },
   DEFAULT: {
     path: '',
     name: 'Posts List',
-    component: siteLayout(NewPost)
-  }
-}
+    component: siteLayout(NewPost),
+  },
+};
 
 export const DEFAULT_PATH = MainRoutes.DEFAULT.path;
 // export const USER_LANDING_PAGE = AppRoutes.DASHBOARD.path;

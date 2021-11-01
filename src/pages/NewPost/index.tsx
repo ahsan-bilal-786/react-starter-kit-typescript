@@ -1,18 +1,16 @@
 import React, { useState, FunctionComponent } from 'react';
-import { useDispatch } from 'react-redux';
+import { APP_NAME } from 'config';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import { Card, Alert } from 'react-bootstrap';
-import { APP_NAME } from 'config';
+import { useHistory, withRouter } from 'react-router';
+import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 import { MainRoutes } from '../../routes';
 import TextField from 'elements/Form/TextField';
 import { FilledButton, BorderedButton } from 'elements/Button';
+import { createPostAction } from '../../actions/postsActions';
 import { FormButtons } from './styles';
-import {createPostAction} from '../../actions/postsActions';
-import { useHistory } from 'react-router';
-import { toast } from 'react-toastify';
-
-
 
 const initStates = {
   title: '',
@@ -26,31 +24,32 @@ const validation = Yup.object({
 
 const NewPost: FunctionComponent = () => {
   const [errorMsg, handleErrorMsg] = useState('');
+  const [formValue, setFormValues] = useState(initStates);
   const [isSubmitting, handleSubmission] = useState(false);
 
   const history = useHistory();
   const dispatch = useDispatch();
 
-  const handleSubmit = (values: any, { setErrors }: any) => {
+  const getFormData = (values: { title: string; body: string }) => {
+    console.log('getFormData::', values);
+  };
+
+  const handleSubmit = (values: any, { resetForm }: any) => {
     handleSubmission(true);
-    // const { title, body } = values;
+    const { title, body } = values;
     toast.info('Post Created!', {
-      position: "top-right",
+      position: 'top-right',
       autoClose: 5000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: false,
       draggable: false,
       progress: undefined,
-      });
-    console.log(values);
-    dispatch(createPostAction(values));
+    });
+    dispatch(createPostAction(title, body));
     history.push(MainRoutes.POSTS.path);
+    resetForm({});
     handleSubmission(false);
-  };
-
-  const handleReset = () => {
-    console.log('clicked reset')
   };
 
   return (
@@ -62,38 +61,58 @@ const NewPost: FunctionComponent = () => {
           initialValues={initStates}
           validationSchema={validation}
           onSubmit={handleSubmit}
-          onReset={handleReset}
         >
-          <Form>
-            <TextField
-              label='Title'
-              name='title'
-              type='text'
-              placeholder='Enter post title'
-            />
-            <TextField
-              label='Details'
-              name='body'
-              type='text'
-              placeholder='Please enter post details'
-            />
-            <FormButtons>
-                <FilledButton
-                type='submit'
-                disabled={isSubmitting ? true : false}
-                className='mr-2'
-                >
-                Submit
-                </FilledButton>
-                <BorderedButton type='reset' className='float-right'>
-                Reset
-                </BorderedButton>
-            </FormButtons>
-          </Form>
+          {({
+            values,
+            errors,
+            touched,
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            isSubmitting,
+            setFieldValue,
+            resetForm,
+            /* and other goodies */
+          }) => {
+            setFormValues(initStates);
+            getFormData(values);
+            return (
+              <Form>
+                <TextField
+                  label='Title'
+                  name='title'
+                  type='text'
+                  placeholder='Enter post title'
+                />
+                <TextField
+                  label='Details'
+                  name='body'
+                  type='text'
+                  placeholder='Please enter post details'
+                />
+                <FormButtons>
+                  <FilledButton
+                    type='submit'
+                    disabled={isSubmitting ? true : false}
+                    className='mr-2'
+                  >
+                    Submit
+                  </FilledButton>
+                  <BorderedButton
+                    type='reset'
+                    className='float-right'
+                    onClick={resetForm}
+                  >
+                    Reset
+                  </BorderedButton>
+                </FormButtons>
+              </Form>
+            );
+          }}
         </Formik>
       </Card.Body>
     </Card>
   );
 };
 
-export default NewPost;
+export default withRouter(NewPost);

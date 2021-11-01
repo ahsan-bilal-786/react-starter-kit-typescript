@@ -52,6 +52,16 @@ export const putRequest = (route: string, data = {}) => {
       return failedResponse(error);
     });
 };
+export const delRequest = (route: string, data = {}) => {
+  return axios
+    .delete(route, data)
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      return failedResponse(error);
+    });
+};
 
 export const registerUser = (
   email: string,
@@ -85,4 +95,22 @@ export const updateProfile = (
   const data = { email, password, firstName, lastName };
   const route = getRoute('userProfile', { userId });
   return putRequest(route, data);
+};
+
+export const fetchPosts = () => {
+  const route = getRoute('getPosts');
+  return getRequest(route);
+};
+
+export const createPost = (title: string, body: string) => {
+  const route = getRoute('getPosts');
+  return postRequest(route, { title, body });
+};
+export const getPostComments = (id: number) => {
+  const route = getRoute('getPostComments', { postId: id });
+  return getRequest(route);
+};
+export const deletePost = (id: number) => {
+  const route = getRoute('deletePost', { postId: id });
+  return delRequest(route);
 };

@@ -1,59 +1,77 @@
 import { Dispatch } from 'redux';
-import { JSON_API_PATH } from '../config'
-import {postActionTypes as types} from './types';
-import axios from 'axios';
+import { postActionTypes as types } from './types';
+import { createPost, fetchPosts, getPostComments, deletePost } from '../api';
 
-export const fetchPostsAction = () => async (dispatch: Dispatch) => {
-    const posts = await axios.get(`${JSON_API_PATH}/posts`)
-        .then((res) => {
-            return res.data
-        })
-        .catch((error)=> {
-            return error.message
+const setPostsData = (payload: unknown) => {
+  return {
+    type: types.QUERY_POSTS,
+    payload,
+  };
+};
+
+const setCommentsData = (payload: unknown) => {
+  return {
+    type: types.QUERY_COMMENTS,
+    payload,
+  };
+};
+
+export const fetchPostsAction = () => (dispatch: Dispatch) => {
+  return fetchPosts()
+    ?.then((resp) => {
+      if (resp) {
+        dispatch(setPostsData(resp));
+        return true;
+      }
+      return Promise.reject(resp);
+    })
+    .catch((e) => {
+      return Promise.reject(e);
+    });
+};
+export const deletePostAction = (id: number) => (dispatch: Dispatch) => {
+  return deletePost(id)
+    .then((resp) => {
+      if (resp) {
+        dispatch({
+          type: types.DELETE_POST,
+          payload: true,
         });
+        return true;
+      }
+      return Promise.reject(resp);
+    })
+    .catch((e) => Promise.reject(e));
+};
 
-    dispatch({
-        type: types.QUERY_POSTS,
-        payload: posts
-    })
-}
-export const deletePostAction = (id: number) => async (dispatch: Dispatch) => {
-    dispatch({
-        type: types.DELETE_POST,
-        payload: true
-    })
-    return axios.delete(`${JSON_API_PATH}/posts/${id}`)
-        .then((res)=> {
-            dispatch({
-                type: types.DELETE_POST,
-                payload: false
-            })
-            return res
-        })
-        .catch((error)=> {
-            return error.message
-        })
-}
-export const createPostAction = (post: {title: string, body: string}) => async (dispatch: Dispatch) => {
-    return axios.post(`${JSON_API_PATH}/posts`, post)
-        .then((res)=> {
-            return res
-        })
-        .catch((error)=> {
-            return error.message
-        })
-}
+export const createPostAction =
+  (title: string, body: string) => (dispatch: Dispatch) => {
+    return createPost(title, body)
+      .then((resp) => {
+        if (resp) {
+          dispatch({
+            type: types.POST_POST,
+            payload: {
+              data: resp.data,
+            },
+          });
+          return true;
+        }
+        return Promise.reject(resp);
+      })
+      .catch((e) => {
+        return Promise.reject(e);
+      });
+  };
 
-export const fetchPostCommentsAction = (id: number) => async (dispatch: Dispatch) => {
-    const comments =  await axios.get(`${JSON_API_PATH}/posts/${id}/comments`)
-        .then((res)=> {
-            return res.data
-        })
-        .catch((error)=> {
-            return error.message
-        })
-    dispatch({
-        type: types.QUERY_COMMENTS,
-        payload: comments
+export const fetchPostCommentsAction = (id: number) => (dispatch: Dispatch) => {
+  return getPostComments(id)
+    ?.then((resp) => {
+      if (resp) {
+        dispatch(setCommentsData(resp));
+        return true;
+      }
+      return Promise.reject(resp);
     })
-}
+    .catch((e) => Promise.reject(e));
+};
