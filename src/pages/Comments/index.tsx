@@ -1,34 +1,29 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { Col, Container, Row } from 'react-bootstrap';
-import { PostCard, PostsWrapper } from './style';
-import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
-import { fetchPostCommentsAction } from 'actions/postsActions';
-import Loader from 'components/Loader/Loader';
+import { connect, ConnectedProps } from 'react-redux';
+import { bindActionCreators, Dispatch } from 'redux';
+import { RootState } from 'store';
+import { AppActions } from 'actions/types';
+import { getComments } from 'actions/postsActions';
 import map from 'lodash/map';
+import Loader from 'components/Loader/Loader';
+import { PostCard, PostsWrapper } from './style';
 
-interface IComments {
-  postId: number;
-  id: number;
-  name: string;
-  email: string;
-  body: string;
-}
-const Comments: FC = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const posts = useSelector((state: RootStateOrAny) => state.posts);
-
-  useEffect(() => {}, [posts]);
-
+const Comments: FC<ComponentProps> = ({ comments, getComments }) => {
+  const { pid } = useParams<{ pid: string }>();
+  useEffect(() => {
+    getComments(+pid);
+  }, []);
   return (
     <PostsWrapper>
       <h3 className='text-center'>{`Post's Comments`}</h3>
-      {/* <UpdateModal /> */}
       <Container>
-        {isLoading ? (
-          <Loader typeOfVariant='primary' />
-        ) : (
-          <Row sm='1'>
-            {map(posts.comments, (c: IComments) => {
+        <Row sm='1'>
+          {comments?.loading ? (
+            <Loader typeOfVariant='primary' />
+          ) : (
+            map(comments?.data, (c: any) => {
               return (
                 <Col key={c.id}>
                   <PostCard>
@@ -42,12 +37,23 @@ const Comments: FC = () => {
                   </PostCard>
                 </Col>
               );
-            })}
-          </Row>
-        )}
+            })
+          )}
+        </Row>
       </Container>
     </PostsWrapper>
   );
 };
 
-export default Comments;
+const mapStateToProps = (state: RootState) => ({
+  comments: state.posts.comments,
+});
+
+const mapDispatchToProps = (dispatch: Dispatch<AppActions>) => ({
+  getComments: bindActionCreators(getComments, dispatch),
+});
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+type ComponentProps = ConnectedProps<typeof connector>;
+
+export default connector(Comments);

@@ -23,6 +23,7 @@ export const RoutesHOC = (routes: any, defaultPath: any) => {
               key={route.name}
               path={route.path}
               component={route.component}
+              {...props}
             />
           );
         })}
@@ -81,13 +82,14 @@ export const MainRoutes = {
     component: dashboardLayout(Posts),
   },
   COMMENTS: {
-    path: '/comments',
+    path: '/comments/:pid',
     name: 'Post Comments',
     component: dashboardLayout(PostComments),
   },
   DEFAULT: {
-    path: '',
-    name: 'Posts List',
+    exact: true,
+    path: '/',
+    name: 'Create New Post',
     component: siteLayout(NewPost),
   },
 };

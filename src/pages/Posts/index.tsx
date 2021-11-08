@@ -1,101 +1,51 @@
-import React, { useEffect, useState } from 'react';
-import map from 'lodash/map';
-import { Col, Container, Row } from 'react-bootstrap';
-import { PostCard, PostCardActions, PostsWrapper } from './style';
-import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
-import {
-  fetchPostsAction,
-  deletePostAction,
-  fetchPostCommentsAction,
-} from 'actions/postsActions';
+import React, { FC, useEffect } from 'react';
+import { Container } from 'react-bootstrap';
+import { getPosts } from 'actions/postsActions';
+import { RootState } from 'store';
+import { connect, ConnectedProps } from 'react-redux';
+import { bindActionCreators, Dispatch } from 'redux';
+import { AppActions } from 'actions/types';
 import Loader from 'components/Loader/Loader';
-import { toast } from 'react-toastify';
-import { MainRoutes } from 'routes';
-import { useHistory, withRouter } from 'react-router-dom';
-interface IPostTypes {
-  userId: number;
-  id: number;
-  title: string;
-  body: string;
-}
-const Posts = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const history = useHistory();
-  const dispatch = useDispatch();
-  const posts = useSelector((state: RootStateOrAny) => state.posts);
+import PostContainer from 'components/Post';
+import { PostsWrapper } from 'pages/Comments/style';
+
+const Posts: FC<ComponentProps> = ({ posts, getPosts }) => {
+  const { loading, data, error } = posts;
   useEffect(() => {
-    setIsLoading(true);
-    setTimeout(() => {
-      dispatch(fetchPostsAction());
-      setIsLoading(false);
-    }, 1000);
+    getPosts();
     return () => {
       // cleanup
     };
-  }, [dispatch]);
+  }, []);
 
-  const deletePostHandler = (id: number, title: string) => {
-    toast.error(`Removed ${title}!`, {
-      position: 'top-right',
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: false,
-      draggable: false,
-      progress: undefined,
-    });
-    dispatch(deletePostAction(id));
-  };
-  const fetchPostCommentsHandler = (id: number) => {
-    dispatch(fetchPostCommentsAction(id));
-    history.push(MainRoutes.COMMENTS.path);
-  };
+  let postContent;
+  const loader = <Loader typeOfVariant='circle' />;
+  const postItems = <PostContainer data={data} />;
+  if (!error?.length) {
+    postContent = postItems;
+  } else {
+    postContent = <p className='text-center'>{error}</p>;
+  }
 
   return (
     <PostsWrapper>
-      <h3 className='text-center'>Posts</h3>
-      {/* <UpdateModal /> */}
       <Container>
-        {isLoading ? (
-          <Loader typeOfVariant='primary' />
-        ) : (
-          <Row xl={4} lg={3} md={2} sm={1} xs={1}>
-            {map(posts.data, (post: IPostTypes) => {
-              return (
-                <Col key={post.id}>
-                  <PostCard>
-                    <strong className='d-block text-center mb-2 text-capitalize'>
-                      {post.title}
-                    </strong>
-                    <span className='d-block'>{post.body}</span>
-                    <PostCardActions>
-                      <li
-                        className='list-inline-item action'
-                        onClick={() => fetchPostCommentsHandler(post.id)}
-                      >
-                        <a>Comments</a>
-                      </li>
-                      <li className='list-inline-item action'>
-                        <a>Edit</a>
-                      </li>
-                      <li
-                        className='list-inline-item action'
-                        onClick={() => {
-                          deletePostHandler(post.id, post.title);
-                        }}
-                      >
-                        <a>Remove</a>
-                      </li>
-                    </PostCardActions>
-                  </PostCard>
-                </Col>
-              );
-            })}
-          </Row>
-        )}
+        <h3 className='text-center'>Posts</h3>
+        {loading ? loader : postContent}
       </Container>
     </PostsWrapper>
   );
 };
 
-export default withRouter(Posts);
+const mapStateToProps = (state: RootState) => ({
+  posts: state.posts,
+});
+
+const mapDispatchToProps = (dispatch: Dispatch<AppActions>) => ({
+  getPosts: bindActionCreators(getPosts, dispatch),
+});
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+type ComponentProps = ConnectedProps<typeof connector>;
+
+export default connector(Posts);
