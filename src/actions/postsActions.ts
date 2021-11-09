@@ -30,19 +30,11 @@ export const startAddPost = (postData: Post) => {
     const { title = '', body = '' } = postData;
     const post = { title, body };
     return createPost(title, body)
-      .then((resp) => {
+      .then((resp: any) => {
         if (resp) {
-          toast.error(`Removed ${title}!`, {
-            position: 'top-right',
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: false,
-            draggable: false,
-            progress: undefined,
-          });
           dispatch(
             addPost({
+              id: resp.data.id,
               ...post,
             })
           );
@@ -63,6 +55,7 @@ export const startRemovePost =
       .then((resp) => {
         if (resp) {
           dispatch(removePost(id));
+          toast.success('Post deleted!');
         }
         return true;
       })

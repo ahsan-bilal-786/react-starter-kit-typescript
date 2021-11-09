@@ -1,6 +1,7 @@
 import React, { useState, FunctionComponent, useEffect } from 'react';
 import { Card, Alert } from 'react-bootstrap';
 import { APP_NAME } from 'config';
+import { MainRoutes } from 'routes';
 import { AppActions } from 'actions/types';
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect, ConnectedProps } from 'react-redux';
@@ -9,6 +10,7 @@ import { toast } from 'react-toastify';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { FilledButton, BorderedButton } from 'elements/Button';
+import { useHistory } from 'react-router';
 import { FormButtons } from './styles';
 
 const initStates = {
@@ -24,10 +26,8 @@ const postValidation = Yup.object({
 const NewPost: FunctionComponent<ComponentProps> = ({ addPostAction }) => {
   const [errorMsg, handleErrorMsg] = useState('');
   const [isSubmitting, handleSubmission] = useState(false);
+  const history = useHistory();
 
-  useEffect(() => {
-    console.log(addPostAction);
-  }, []);
   const formik = useFormik({
     initialValues: initStates,
     validationSchema: postValidation,
@@ -50,8 +50,8 @@ const NewPost: FunctionComponent<ComponentProps> = ({ addPostAction }) => {
       draggable: false,
       progress: undefined,
     });
-    // dispatch(createPostAction(title, body));
     handleSubmission(false);
+    history.push(MainRoutes.POSTS.path);
   };
 
   return (

@@ -1,17 +1,14 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { Provider } from 'react-redux';
-import { createBrowserHistory } from 'history';
 import store from 'store/index';
-import { Router } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import { AppRouter } from 'routes';
 import { ToastContainer } from 'react-toastify';
 
-const history = createBrowserHistory();
-
-const App = () => {
+const App = (): ReactElement => {
   return (
     <Provider store={store}>
-      <Router history={history}>
+      <Router>
         <ToastContainer
           position='top-right'
           autoClose={5000}

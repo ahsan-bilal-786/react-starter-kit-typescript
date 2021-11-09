@@ -23,7 +23,6 @@ export const RoutesHOC = (routes: any, defaultPath: any) => {
               key={route.name}
               path={route.path}
               component={route.component}
-              {...props}
             />
           );
         })}
@@ -87,7 +86,6 @@ export const MainRoutes = {
     component: dashboardLayout(PostComments),
   },
   DEFAULT: {
-    exact: true,
     path: '/',
     name: 'Create New Post',
     component: siteLayout(NewPost),
