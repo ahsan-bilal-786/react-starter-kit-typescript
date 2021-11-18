@@ -1,4 +1,4 @@
-import React, { useState, FunctionComponent, useEffect } from 'react';
+import React, { useState, FunctionComponent } from 'react';
 import { Card, Alert } from 'react-bootstrap';
 import { APP_NAME } from 'config';
 import { MainRoutes } from 'routes';
@@ -69,10 +69,9 @@ const NewPost: FunctionComponent<ComponentProps> = ({ addPostAction }) => {
             type='text'
             {...formik.getFieldProps('title')}
           />
-
-          {formik.touched.title && formik.errors.title ? (
+          {formik.touched.title && formik.errors.title && (
             <p className='text-danger'>{formik.errors.title}</p>
-          ) : null}
+          )}
           <label className='form-label' htmlFor='body'>
             Post Body
           </label>
@@ -82,14 +81,13 @@ const NewPost: FunctionComponent<ComponentProps> = ({ addPostAction }) => {
             type='text'
             {...formik.getFieldProps('body')}
           />
-
-          {formik.touched.body && formik.errors.body ? (
+          {formik.touched.body && formik.errors.body && (
             <p className='text-danger'>{formik.errors.body}</p>
-          ) : null}
+          )}
           <FormButtons>
             <FilledButton
               type='submit'
-              disabled={isSubmitting ? true : false}
+              disabled={isSubmitting}
               className='mr-2'
             >
               Submit

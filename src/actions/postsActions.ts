@@ -1,31 +1,21 @@
 import { Dispatch } from 'redux';
-import {
-  Post,
-  AppActions,
-  ADD_POST,
-  REMOVE_POST,
-  POSTS_LOADING,
-  POSTS_FAIL,
-  POSTS_SUCCESS,
-  COMMENTS_LOADING,
-  COMMENTS_SUCCESS,
-  COMMENTS_FAIL,
-} from './types';
-import { createPost, fetchPosts, getPostComments, deletePost } from '../api';
 import { toast } from 'react-toastify';
+import { TypeKeys } from 'actions/type-keys';
+import { AppActions, IPost } from 'actions/types';
+import { createPost, fetchPosts, getPostComments, deletePost } from 'api';
 
-export const addPost = (post: Post): AppActions => ({
-  type: ADD_POST,
-  post,
+export const addPost = (post: IPost): AppActions => ({
+  type: TypeKeys.ADD_POST,
+  payload: { post },
 });
 
 export const removePost = (id: number): AppActions => ({
-  type: REMOVE_POST,
+  type: TypeKeys.REMOVE_POST,
   id,
 });
 
 /* Add Post */
-export const startAddPost = (postData: Post) => {
+export const startAddPost = (postData: IPost) => {
   return (dispatch: Dispatch<AppActions>) => {
     const { title = '', body = '' } = postData;
     const post = { title, body };
@@ -66,13 +56,13 @@ export const startRemovePost =
 /* Get Posts */
 export const getPosts = () => (dispatch: Dispatch<AppActions>) => {
   dispatch({
-    type: POSTS_LOADING,
+    type: TypeKeys.POSTS_LOADING,
   });
   return fetchPosts()
     ?.then((res: any) => {
       if (res) {
         dispatch({
-          type: POSTS_SUCCESS,
+          type: TypeKeys.POSTS_SUCCESS,
           payload: {
             posts: res,
           },
@@ -81,7 +71,7 @@ export const getPosts = () => (dispatch: Dispatch<AppActions>) => {
     })
     .catch((e) => {
       dispatch({
-        type: POSTS_FAIL,
+        type: TypeKeys.POSTS_FAIL,
         payload: e.message,
       });
     });
@@ -90,13 +80,13 @@ export const getPosts = () => (dispatch: Dispatch<AppActions>) => {
 export const getComments =
   (pid: number) => (dispatch: Dispatch<AppActions>) => {
     dispatch({
-      type: COMMENTS_LOADING,
+      type: TypeKeys.COMMENTS_LOADING,
     });
     return getPostComments(pid)
       ?.then((res: any) => {
         if (res) {
           dispatch({
-            type: COMMENTS_SUCCESS,
+            type: TypeKeys.COMMENTS_SUCCESS,
             payload: {
               comments: res,
             },
@@ -105,7 +95,7 @@ export const getComments =
       })
       .catch((e) => {
         dispatch({
-          type: COMMENTS_FAIL,
+          type: TypeKeys.COMMENTS_FAIL,
           payload: e.message,
         });
       });

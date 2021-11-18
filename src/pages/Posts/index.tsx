@@ -13,9 +13,6 @@ const Posts: FC<ComponentProps> = ({ posts, getPosts }) => {
   const { loading, data, error } = posts;
   useEffect(() => {
     getPosts();
-    return () => {
-      // cleanup
-    };
   }, []);
 
   let postContent;

@@ -1,23 +1,13 @@
-import {
-  Post,
-  Comment,
-  POSTS_FAIL,
-  POSTS_LOADING,
-  POSTS_SUCCESS,
-  AppActions,
-  ADD_POST,
-  COMMENTS_LOADING,
-  COMMENTS_SUCCESS,
-  COMMENTS_FAIL,
-} from '../actions/types';
+import { TypeKeys } from 'actions/type-keys';
+import { IPost, IComment, AppActions } from '../actions/types';
 
 interface IDefaultState {
   loading: boolean;
-  data?: Post[];
+  data?: IPost[];
   error?: string;
   comments?: {
     loading: boolean;
-    data?: Comment[];
+    data?: IComment[];
     error?: string;
   };
 }
@@ -36,34 +26,34 @@ export const postReducer = (
   action: AppActions
 ): IDefaultState => {
   switch (action.type) {
-    case POSTS_FAIL:
+    case TypeKeys.POSTS_FAIL:
       return {
         loading: false,
         error: action.payload,
       };
-    case POSTS_LOADING:
+    case TypeKeys.POSTS_LOADING:
       return {
         loading: true,
       };
-    case POSTS_SUCCESS:
+    case TypeKeys.POSTS_SUCCESS:
       return {
         loading: false,
         data: action.payload.posts,
       };
-    case ADD_POST:
+    case TypeKeys.ADD_POST:
       const clonePosts = state.data || [];
       return {
         ...state,
-        data: [...clonePosts, action.post],
+        data: [action.payload.post, ...clonePosts],
       };
-    case COMMENTS_LOADING:
+    case TypeKeys.COMMENTS_LOADING:
       return {
         ...state,
         comments: {
           loading: true,
         },
       };
-    case COMMENTS_SUCCESS:
+    case TypeKeys.COMMENTS_SUCCESS:
       return {
         ...state,
         comments: {
@@ -71,7 +61,7 @@ export const postReducer = (
           data: action.payload.comments,
         },
       };
-    case COMMENTS_FAIL:
+    case TypeKeys.COMMENTS_FAIL:
       return {
         ...state,
         comments: {

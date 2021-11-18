@@ -4,7 +4,7 @@ import { Col, Container, Row } from 'react-bootstrap';
 import { connect, ConnectedProps } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { RootState } from 'store';
-import { AppActions } from 'actions/types';
+import { AppActions, IComment } from 'actions/types';
 import { getComments } from 'actions/postsActions';
 import map from 'lodash/map';
 import Loader from 'components/Loader/Loader';
@@ -23,7 +23,7 @@ const Comments: FC<ComponentProps> = ({ comments, getComments }) => {
           {comments?.loading ? (
             <Loader typeOfVariant='primary' />
           ) : (
-            map(comments?.data, (c: any) => {
+            map(comments?.data, (c: IComment) => {
               return (
                 <Col key={c.id}>
                   <PostCard>
