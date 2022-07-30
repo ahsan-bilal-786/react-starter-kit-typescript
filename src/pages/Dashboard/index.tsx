@@ -1,13 +1,9 @@
-import React from 'react';
-import ErrorBoundary from 'components/ErrorBoundary';
+
+import { PostsContainer } from "pages/Dashboard/containers/posts";
+import React from "react";
 
 const Dashboard = () => {
-  return (
-    <ErrorBoundary>
-      <h2>Dashboard</h2>
-      <p>Hi this sis dashbaord</p>
-    </ErrorBoundary>
-  );
+  return <PostsContainer />;
 };
 
 export default Dashboard;
